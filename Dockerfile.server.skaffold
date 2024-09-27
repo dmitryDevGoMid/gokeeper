@@ -1,0 +1,33 @@
+# Используем официальный образ Go как базовый
+FROM golang:1.22-alpine AS builder
+
+# Устанавливаем рабочую директорию внутри контейнера
+WORKDIR /app
+
+# Копируем файлы go.mod и go.sum в рабочую директорию
+COPY go.mod go.sum ./
+
+# Копируем остальные файлы проекта в рабочую директорию
+COPY ./server /app/server
+
+# Скачиваем все зависимости
+RUN go mod download
+
+# Собираем приложение
+RUN cd /app/server/internal/app && go build -o /app/main .
+
+# Второй этап: создание минимального образа для выполнения
+FROM alpine:latest
+
+# Устанавливаем рабочую директорию внутри контейнера
+WORKDIR /app
+
+# Копируем собранный бинарный файл из первого этапа
+COPY --from=builder /app/main .
+
+EXPOSE 8000
+
+# Указываем команду для запуска приложения
+CMD ["./main"]
+
+#command: ["./main", "-dbm=mongodb://admin:admin@mongodb-service:27017", "-adr=localhost:8000"]

@@ -1,0 +1,22 @@
+version: '3.9'
+
+services:
+  mongodb:
+    container_name: mongodb
+    image: mongo:5.0
+    volumes:
+      - ./mongodata:/data/db
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=admin
+  redis:
+    image: redis:6.0-alpine
+    ports:
+      - "6379:6379"
+    environment:
+      - REDIS_MAX_CONNECTIONS=5000
+    volumes:
+      - ./redis-data:/data
+    command: ["redis-server", "--appendonly", "yes"]

@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package files;
+
+option go_package = "./grpcapi/gateway/internal/files/pb";
+
+service DataStreamer {
+  rpc SendFiles (stream FilesRequest) returns (stream FilesResponse) {}
+  rpc GetFile (FileRequest) returns (stream FileChunk);
+}
+
+message FilesRequest {
+  bytes data = 1;
+  string clientid = 2;
+  string uidfile = 3;
+  string numberpart = 4;
+  string countpart = 5;
+  bool abort = 6;
+  string checksum = 7;
+  string filename = 8;
+}
+
+message FilesResponse {
+  string message = 1;
+  string clientid = 2;
+  string uidfile = 3;
+  string numberpart = 4;
+  string countpart = 5;
+  bool abort = 6;
+}
+
+message FileRequest {
+  string client_id = 1;
+  string file_id = 2;
+}
+
+message FileChunk {
+  bytes data = 1;
+  bool end_of_file = 2;
+  string checksum = 3; // Контрольная сумма файла
+}

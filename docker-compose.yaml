@@ -1,0 +1,92 @@
+version: '3.8'
+
+services:
+  server:
+    container_name: gokeeper-server
+    build:
+      context: .
+      dockerfile: Dockerfile.server
+    ports:
+      - "8000:8000"
+      - "9000:9000"
+    environment:
+      - DATABASE_MONGO=mongodb://admin:admin@mongodb-service:27017
+      - SERVER_ADDRESS=localhost:8000
+    depends_on:
+      - mongodb
+    command: ["./main"]
+    networks:
+      - my-network
+    hostname: gokeeperserver
+
+  gateway:
+    container_name: gokeeper-gateway
+    build:
+      context: .
+      dockerfile: Dockerfile.grpcapi.gateway
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_MONGO=mongodb://admin:admin@mongodb-service:27017
+      - GRPC_ADDRESS=fileservice:50051
+      - SERVER_ADDRESS=:3000
+      - GOKEEPER_ADDRESS=gokeeperserver:8000
+    depends_on:
+      - mongodb
+      - fileserver
+    command: ["./main"]
+    networks:
+      - my-network
+
+  fileserver:
+    container_name: gokeeper-fileserver
+    build:
+      context: .
+      dockerfile: Dockerfile.grpcapi.fileserver
+    ports:
+      - "50051:50051"
+    environment:
+      - DATABASE_MONGO=mongodb://admin:admin@mongodb-service:27017
+      - DATABASE_REDIS=redis-service:6379
+      - GRPC_PORT=:50051
+    depends_on:
+      - mongodb
+      - redis
+    command: ["./main"]
+    networks:
+      - my-network
+    hostname: fileservice
+    
+  mongodb:
+    container_name: gokeeper-mongodb
+    image: mongo:5.0
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=admin
+    volumes:
+      - ./mongodata:/data/db
+    networks:
+      - my-network
+    hostname: mongodb-service
+
+  redis:
+    container_name: gokeeper-redis
+    image: redis:6.0-alpine
+    ports:
+      - "6379:6379"
+    environment:
+      - REDIS_MAX_CONNECTIONS=5000
+    volumes:
+      - ./redis-data:/data
+    networks:
+      - my-network
+    hostname: redis-service
+
+volumes:
+  mongo-data:
+
+networks:
+  my-network:
+    driver: bridge

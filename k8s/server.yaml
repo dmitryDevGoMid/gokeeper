@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gokeeper
+  namespace: gokeeper
+spec:
+  selector:
+    matchLabels:
+      app: gokeeper
+
+  template:
+    metadata:
+      labels:
+        app: gokeeper
+    spec:
+      containers:
+        - name: gokeeper
+          image: micro-service-gokeeper-server
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: gokeeper-service
+  namespace: gokeeper
+  labels:
+    app: gokeeper-service
+spec:
+  type: LoadBalancer
+  ports:
+    - protocol: TCP
+      port: 8000
+  selector:
+    app: gokeeper

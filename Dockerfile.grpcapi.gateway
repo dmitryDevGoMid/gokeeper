@@ -1,0 +1,26 @@
+# Используем официальный образ Go как базовый
+FROM golang:1.22-alpine AS builder
+
+# Устанавливаем рабочую директорию внутри контейнера
+WORKDIR /app
+
+# Копируем файлы go.mod и go.sum в рабочую директорию
+COPY go.mod go.sum ./
+
+# Копируем остальные файлы проекта в рабочую директорию
+COPY ./grpcapi /app/grpcapi
+
+# Скачиваем все зависимости
+RUN go mod download
+
+# Собираем приложение
+RUN cd /app/grpcapi/gateway/cmd && go build -o /app/main .
+
+# Второй этап: создание минимального образа для выполнения
+FROM alpine:latest
+
+# Устанавливаем рабочую директорию внутри контейнера
+WORKDIR /app
+
+# Копируем собранный бинарный файл из первого этапа
+COPY --from=builder /app/main .
