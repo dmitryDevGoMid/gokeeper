@@ -13,17 +13,16 @@ import (
 	"path/filepath"
 
 	"github.com/dmitryDevGoMid/gokeeper/client/internal/stuffing/pkg/checkdir"
-	//"github.com/dmitryDevGoMid/go-service-collect-metrics/internal/agent/config"
 )
 
 const pathGokeeperKey = "gokeeperspace/gokeeperkey"
 
-type AsimEncrypt interface {
+/*type AsimEncrypt interface {
 	SetPrivateKey() error
 	SetPublicKey() error
-	GenerateRsaKeyPair() (*rsa.PrivateKey, *rsa.PublicKey)
+	GenerateRsaKeyPair() (*rsa.PrivateKey, *rsa.PublicKey, error)
 	Decrypt(ciphertext []byte) (string, error)
-	GenerateKeyLink() (*rsa.PrivateKey, *rsa.PublicKey)
+	GenerateKeyLink() (*rsa.PrivateKey, *rsa.PublicKey, error)
 	GenerateKeyFile(prefix string) error
 	ReadPublicKey(filename string) (*rsa.PublicKey, error)
 	ReadPrivateKey(filename string) (*rsa.PrivateKey, error)
@@ -33,7 +32,7 @@ type AsimEncrypt interface {
 	ReadPublicKeyGetByte() error
 	GetBytePrivate() []byte
 	GetBytePublic() []byte
-	AllSet()
+	AllSet() error
 	ReadServerPublicKey() (*rsa.PublicKey, error)
 	EncryptByServerKey(msg string) ([]byte, error)
 	SetPublicServerKey(key string) error
@@ -43,10 +42,9 @@ type AsimEncrypt interface {
 
 	ReadAndGetClientPublicKey(key string) (*rsa.PublicKey, error)
 	EncryptByClientKeyParts(msg string, key string) ([]byte, error)
-}
+}*/
 
 type AsimEncryptStruct struct {
-	//cfg            *config.Config
 	PathEncryptKey string
 	PublicKey      *rsa.PublicKey
 	PrivateKey     *rsa.PrivateKey
@@ -59,7 +57,6 @@ type AsimEncryptStruct struct {
 }
 
 func NewAsimEncrypt() *AsimEncryptStruct {
-	//cfg *config.Config) AsimEncryptStruct {
 	return &AsimEncryptStruct{}
 }
 
@@ -71,17 +68,38 @@ func (asme *AsimEncryptStruct) GetBytePublic() []byte {
 	return asme.PublicKeyByte
 }
 
-func (asme *AsimEncryptStruct) AllSet() {
-	asme.SetPrivateKey()
-	asme.SetPublicKey()
-	asme.ReadPrivateKeyGetByte()
-	asme.ReadPublicKeyGetByte()
+func (asme *AsimEncryptStruct) AllSet() error {
+	err := asme.SetPrivateKey()
+	if err != nil {
+		return err
+	}
+
+	err = asme.SetPublicKey()
+	if err != nil {
+		return err
+	}
+
+	err = asme.ReadPrivateKeyGetByte()
+	if err != nil {
+		return err
+	}
+
+	err = asme.ReadPublicKeyGetByte()
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // GenerateRsaKeyPair generates an RSA key pair and returns the private and public keys
-func (asme *AsimEncryptStruct) GenerateRsaKeyPair() (*rsa.PrivateKey, *rsa.PublicKey) {
-	privkey, _ := rsa.GenerateKey(rand.Reader, 4096)
-	return privkey, &privkey.PublicKey
+func (asme *AsimEncryptStruct) GenerateRsaKeyPair() (*rsa.PrivateKey, *rsa.PublicKey, error) {
+	privkey, err := rsa.GenerateKey(rand.Reader, 4096)
+	if err != nil {
+		return nil, nil, err
+	}
+	return privkey, &privkey.PublicKey, nil
 }
 
 func (asme *AsimEncryptStruct) SetPublicServerKey(key string) error {
@@ -92,17 +110,13 @@ func (asme *AsimEncryptStruct) SetPublicServerKey(key string) error {
 
 // Get path to keys
 func (asme *AsimEncryptStruct) GetPathToKey() string {
-	PathEncryptKey := "/" //asme.cfg.PathEncrypt.PathEncryptKey
+	PathEncryptKey := "/"
 
-	if PathEncryptKey != "" {
-
-		d, err := os.Getwd()
-		if err != nil {
-			fmt.Println(err)
-		}
-		return d + "/" + PathEncryptKey
+	d, err := os.Getwd()
+	if err != nil {
+		fmt.Println(err)
 	}
-	return ""
+	return d + "/" + PathEncryptKey
 
 }
 
@@ -132,13 +146,10 @@ func (asme *AsimEncryptStruct) GetPathExecutable() (string, error) {
 
 func (asme *AsimEncryptStruct) CheckCreateFileToDirectory() {
 
-	//dirPath, err := asme.GetPathExecutable()
 	dirPath, _, _, err := checkdir.EnsureDirectoryExists(pathGokeeperKey, "")
 	if err != nil {
 		return
 	}
-	//fmt.Println("dirPath CheckCreateFileToDirectory", dirPath)
-	//time.Sleep(10 * time.Second)
 	// Проверяем права доступа на запись в текущую директорию
 	fileInfo, err := os.Stat(dirPath)
 	if err != nil {
@@ -159,7 +170,6 @@ func (asme *AsimEncryptStruct) CheckCreateFileToDirectory() {
 
 func (asme *AsimEncryptStruct) CheckFile(name string) error {
 	// Проверяем, существует ли файл
-	//currentPath, err := asme.GetPathExecutable()
 	currentPath, _, _, err := checkdir.EnsureDirectoryExists(pathGokeeperKey, name)
 	if err != nil {
 		return err
@@ -193,7 +203,6 @@ func (asme *AsimEncryptStruct) CheckFile(name string) error {
 // Set Public key
 func (asme *AsimEncryptStruct) SetPublicKey() error {
 	//Check config by private key for decode body
-	//PathEncryptKey := asme.GetPathOnly("keeper_public.pem")
 	_, PathEncryptKey, _, err := checkdir.EnsureDirectoryExists(pathGokeeperKey, "keeper_public.pem")
 	if err != nil {
 		fmt.Println("Error getting file info:", err)
@@ -207,9 +216,6 @@ func (asme *AsimEncryptStruct) SetPublicKey() error {
 		}
 		asme.PublicKey = PublicKey
 		asme.PathEncryptKey = PathEncryptKey
-
-		//asme.cfg.PathEncrypt.KeyEncryptEnbled = true
-		//fmt.Println(asme.PublicKey)
 	}
 
 	return nil
@@ -218,7 +224,6 @@ func (asme *AsimEncryptStruct) SetPublicKey() error {
 // Set Private key
 func (asme *AsimEncryptStruct) SetPrivateKey() error {
 	//Check config by private key for decode body
-	//PathEncryptKey := asme.GetPathOnly("keeper_private.pem")
 	_, PathEncryptKey, _, err := checkdir.EnsureDirectoryExists(pathGokeeperKey, "keeper_private.pem")
 	if err != nil {
 		fmt.Println("Error getting file info:", err)
@@ -233,19 +238,20 @@ func (asme *AsimEncryptStruct) SetPrivateKey() error {
 		asme.PrivateKey = PrivateKey
 		asme.PathEncryptKey = PathEncryptKey
 
-		//asme.cfg.PathEncrypt.KeyEncryptEnbled = true
-		//fmt.Println(asme.PrivateKey)
 	}
 
 	return nil
 }
 
 // GenerateKey generates a new RSA key pair and saves the private key to a file
-func (asme *AsimEncryptStruct) GenerateKeyLink() (*rsa.PrivateKey, *rsa.PublicKey) {
+func (asme *AsimEncryptStruct) GenerateKeyLink() (*rsa.PrivateKey, *rsa.PublicKey, error) {
 	// Generate a new RSA key pair
-	priv, public := asme.GenerateRsaKeyPair()
+	priv, public, err := asme.GenerateRsaKeyPair()
+	if err != nil {
+		return nil, nil, err
+	}
 
-	return priv, public
+	return priv, public, nil
 }
 
 // GenerateKey generates a new RSA key pair and saves the private key to a file
@@ -275,7 +281,10 @@ func (asme *AsimEncryptStruct) GenerateKeyFile(prefix string) error {
 	}
 
 	// Generate a new RSA key pair
-	priv, public := asme.GenerateRsaKeyPair()
+	priv, public, err := asme.GenerateRsaKeyPair()
+	if err != nil {
+		return err
+	}
 
 	// Encode the private key in PKCS#1 format
 	derStream := x509.MarshalPKCS1PrivateKey(priv)
@@ -291,11 +300,6 @@ func (asme *AsimEncryptStruct) GenerateKeyFile(prefix string) error {
 		fmt.Println("Error getting file info:", err)
 		return err
 	}
-	/*currentPath, err := asme.GetPathExecutable()
-	if err != nil {
-		fmt.Println("Error getting file info:", err)
-		return err
-	}*/
 
 	fileCreatePrivate := fmt.Sprintf("%s/%s", currentPath, prefix+"_private.pem")
 	filePrivate, err := os.Create(fileCreatePrivate)
@@ -330,21 +334,16 @@ func (asme *AsimEncryptStruct) GenerateKeyFile(prefix string) error {
 		return err
 	}
 
-	//fmt.Println("Private Key : ", priv)
-	//fmt.Println("Public key ", &priv.PublicKey)
-
 	return nil
 }
 
 func (asme *AsimEncryptStruct) ReadPublicKeyGetByte() error {
 	// Read the file
-	//file := asme.GetPathOnly("keeper_public.pem")
 	_, file, _, err := checkdir.EnsureDirectoryExists(pathGokeeperKey, "keeper_public.pem")
 	if err != nil {
 		fmt.Println("Error getting file info:", err)
 		return err
 	}
-	//fmt.Println(file)
 	data, err := os.ReadFile(file) // changed
 	if err != nil {
 		return err
@@ -357,7 +356,6 @@ func (asme *AsimEncryptStruct) ReadPublicKeyGetByte() error {
 
 // ReadPublicKey reads a public key from a file
 func (asme *AsimEncryptStruct) ReadServerPublicKey() (*rsa.PublicKey, error) {
-
 	// Decode the file from PEM format
 	block, _ := pem.Decode(asme.PublicServerKey)
 	if block == nil {
@@ -410,13 +408,11 @@ func (asme *AsimEncryptStruct) ReadPublicKey(filename string) (*rsa.PublicKey, e
 
 func (asme *AsimEncryptStruct) ReadPrivateKeyGetByte() error {
 	// Read the file
-	//file := asme.GetPathOnly("keeper_private.pem")
 	_, file, _, err := checkdir.EnsureDirectoryExists(pathGokeeperKey, "keeper_private.pem")
 	if err != nil {
 		fmt.Println("Error getting file info:", err)
 		return err
 	}
-	//fmt.Println(file)
 	data, err := os.ReadFile(file) // changed
 	if err != nil {
 		return err
@@ -524,7 +520,11 @@ func (asme *AsimEncryptStruct) EncryptByClientKeyParts(msg string, key string) (
 
 func (asme *AsimEncryptStruct) EncryptByServerKeyParts(msg string) ([]byte, error) {
 	// Use an empty label (label) and the SHA-256 hash function
-	pub, _ := asme.ReadServerPublicKey()
+	pub, err := asme.ReadServerPublicKey()
+	if err != nil {
+		log.Fatal("ReadServerPublicKey:", err)
+	}
+
 	label := []byte("")
 	hash := sha256.New()
 	hash.Write(label)

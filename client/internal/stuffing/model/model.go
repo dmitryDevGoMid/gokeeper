@@ -24,11 +24,6 @@ type Data struct {
 	Config          *config.Config
 }
 
-/*type Log struct {
-	Log  *logrus.Logger
-	LogE *logrus.Entry
-}*/
-
 //  Данные по текстам
 type OptionTexts struct {
 	Description string `json:"description"`

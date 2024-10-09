@@ -60,9 +60,7 @@ func (rep *Repredis) Retry(attempts int, delay time.Duration) RetryDecorator {
 				if i == attempts-1 {
 					return err
 				}
-				//fmt.Println("Retry->Ждем перед повторным запуском!", err, clientid, "; uid:", uid)
 				time.Sleep(delay)
-				//fmt.Println("Retry->Запустили заново сохранение в базе!", err, clientid, "; uid:", uid)
 			}
 			return nil
 		}
@@ -165,10 +163,6 @@ func (rep *Repredis) WriteToDB(mutex *sync.Mutex, bufferChanRedis chan *Chunk, e
 		uidFull = GetMD5Hash(uidFull)
 		start = msg.Start
 		cleintid = msg.Cleintid
-
-		//fmt.Println("Reids-uidFull", uidFull)
-		//fmt.Println("Reids-cleintid", msg.Cleintid)
-		//fmt.Println("Reids-numberPart", msg.NumberPart)
 		wg.Add(1)
 
 		decoratedAcceptPartFile := rep.Retry(10, 1*time.Second)(rep.SavePartFile)
@@ -180,15 +174,10 @@ func (rep *Repredis) WriteToDB(mutex *sync.Mutex, bufferChanRedis chan *Chunk, e
 		}
 		err = decoratedAcceptPartFile(i, wg, msg.Buffer, uidFull, msg.Cleintid, mutex)
 		if err != nil {
-			//fmt.Println("decoratedAcceptPartFile =>")
 			panic(err)
 			// обработка ошибки
 		}
-
-		//fmt.Println("Записали в базу!", msg.NumberPart)
 	}
-
-	//fmt.Println("Вышли из цикла обработки данных из канал!")
 
 	wg.Done()
 }
@@ -213,15 +202,11 @@ func (rep *Repredis) ReadPartFile(start time.Time, uid string, countPart int, cl
 
 		val, err := rep.clientRedis.Get(context.Background(), key).Result()
 		if err != nil {
-			//fmt.Println("uid:", uid, "countPart:", countPart, "cleintid", cleintid, "PartID:", i)
-			//fmt.Println("Пробуем читать ключ:", key)
 			rep.repMongo.StopStream("abort", uid, mutexStop)
 			panic(err)
 		}
 
 		rep.repMongo.SendPartFileToStream([]byte(val), uid, mutexSend)
-
-		//fmt.Printf("Прочитали часть: %d ключ: %s: %d\n", i, key, len([]byte(val)))
 	}
 
 	// sgnal: done, abort

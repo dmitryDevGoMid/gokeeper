@@ -214,10 +214,3 @@ func (m Register) View() string {
 
 	return style.SetStyleBeforeShowMenu(b.String())
 }
-
-/*func main() {
-	if _, err := tea.NewProgram(initialModel()).Run(); err != nil {
-		fmt.Printf("could not start program: %s\n", err)
-		os.Exit(1)
-	}
-}*/

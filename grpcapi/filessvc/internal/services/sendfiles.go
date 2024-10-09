@@ -19,7 +19,7 @@ import (
 )
 
 type Server struct {
-	MongoDB dbmongo.MongoDBClient
+	MongoDB *dbmongo.MongoDBClient
 	RedisDB dbredis.RedisDBClient
 	pb.UnimplementedDataStreamerServer
 }
@@ -37,8 +37,6 @@ func (s *Server) SendFiles(stream pb.DataStreamer_SendFilesServer) error {
 	calcDataChan, calcGetSum, calcDone := calcsum.RunCalcSum()
 	defer close(calcDataChan)
 	defer close(calcDone)
-
-	//rdb := dbredis.NewConnectRedis()
 
 	repm := repmongo.NewRepMongo(s.MongoDB)
 

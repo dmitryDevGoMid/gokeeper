@@ -85,9 +85,9 @@ func TestRegister(t *testing.T) {
 	defer serverRegistre.Close()
 
 	// Create a resty client with the test server URL
-	client := resty.New() //.SetBaseURL(server.URL)
+	client := resty.New()
 
-	cfg, err := config.ParseConfig() //config.ParseConfig()
+	cfg, err := config.ParseConfig()
 
 	if err != nil {
 		fmt.Println("Config", err)
@@ -156,7 +156,6 @@ func TestRegister(t *testing.T) {
 		}
 	}
 
-	//fmt.Println(string(dataCompare))
 	err = writeToFile(pathFile, out)
 	if err != nil {
 		fmt.Println("error write to file: ", err)

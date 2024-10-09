@@ -31,9 +31,8 @@ const (
 
 // General stuff for styling the view
 var (
-	keywordStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("211"))
-	subtleStyle  = lipgloss.NewStyle().Foreground(lipgloss.Color("241"))
-	//ticksStyle    = lipgloss.NewStyle().Foreground(lipgloss.Color("79"))
+	keywordStyle  = lipgloss.NewStyle().Foreground(lipgloss.Color("211"))
+	subtleStyle   = lipgloss.NewStyle().Foreground(lipgloss.Color("241"))
 	checkboxStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("212"))
 	progressEmpty = subtleStyle.Render(progressEmptyChar)
 	dotStyle      = lipgloss.NewStyle().Foreground(lipgloss.Color("236")).Render(dotChar)
@@ -64,10 +63,9 @@ func frame() tea.Cmd {
 }
 
 type FilesDialog struct {
-	data   *model.Data
-	Choice int
-	Chosen bool
-	//Ticks    int
+	data     *model.Data
+	Choice   int
+	Chosen   bool
 	Frames   int
 	Progress float64
 	Loaded   bool
@@ -96,7 +94,6 @@ func NewOpFilesDialog(model *model.Data) Page {
 
 func initialModel() FilesDialog {
 	initialModel := FilesDialog{Choice: 0, Chosen: false, Frames: 0, Progress: 0, Loaded: false, Quitting: false}
-	//direct.SetAdReadDirectory("/Users/aleksandrserbakov/atestsendfile/amnezia.dmg")
 	return initialModel
 }
 
@@ -109,8 +106,6 @@ func (m FilesDialog) NextStepToSend() {
 
 	m.data.NextStep.NextStepByName = "requesthttp"
 	m.data.NextStep.RequestByName = "sendfiles"
-	//direct.SetAdReadDirectory("/Users/aleksandrserbakov/atestsendfile/amnezia.dmg")
-	//os.Exit(1)
 }
 
 func (m FilesDialog) NextStepBackToSelectedFiles() {

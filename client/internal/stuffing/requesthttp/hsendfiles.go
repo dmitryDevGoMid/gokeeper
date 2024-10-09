@@ -20,7 +20,6 @@ import (
 func (h RequestHTTP) GetUnicKey() string {
 	// Получаем текущее время в секундах Unix
 	timestamp := time.Now().Unix()
-	//fmt.Println("Timestamp:", timestamp)
 
 	// Преобразуем время в байты
 	timestampString := fmt.Sprint(timestamp)

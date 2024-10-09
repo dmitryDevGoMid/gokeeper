@@ -27,12 +27,10 @@ func SetToken(user *user.User) (string, error) {
 	if err != nil {
 		fmt.Println("error marshalling user into set token")
 	}
-	//userMarshal = json.Marshal(userByte)
 
 	expirationTime := time.Now().Add(time.Duration(expirationTimeSecond) * time.Second)
 	// Create the JWT claims, which includes the username and expiry time
 	claims := &Claims{
-		//User: *user,
 		User: string(userByte),
 		RegisteredClaims: jwt.RegisteredClaims{
 			// In JWT, the expiry time is expressed as unix milliseconds
@@ -47,7 +45,6 @@ func SetToken(user *user.User) (string, error) {
 
 	if err != nil {
 		// If there is an error in creating the JWT return an internal server error
-		//w.WriteHeader(http.StatusInternalServerError)
 		return "", err
 	}
 

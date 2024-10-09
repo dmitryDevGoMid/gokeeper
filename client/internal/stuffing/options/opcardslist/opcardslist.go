@@ -16,32 +16,15 @@ import (
 	"github.com/muesli/termenv"
 )
 
-/*const (
-	progressBarWidth  = 71
-	progressFullChar  = "█"
-	progressEmptyChar = "░"
-	dotChar           = " • "
-)*/
-
 const listHeight = 14
 
 var (
-	/*subtleStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("241"))
-	dotStyle    = lipgloss.NewStyle().Foreground(lipgloss.Color("236")).Render(dotChar)
-
-	textGreenStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("#008000"))
-	textRedStyle   = lipgloss.NewStyle().Foreground(lipgloss.Color("#FF0000"))
-	textBlackStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("#4B0082"))*/
-
 	titleStyle        = lipgloss.NewStyle().MarginLeft(2)
 	itemStyle         = lipgloss.NewStyle().PaddingLeft(4)
 	selectedItemStyle = lipgloss.NewStyle().PaddingLeft(2).Foreground(lipgloss.Color("170"))
 	paginationStyle   = list.DefaultStyles().PaginationStyle.PaddingLeft(4)
 	helpStyle         = list.DefaultStyles().HelpStyle.PaddingLeft(4).PaddingBottom(1)
-	//quitTextStyle     = lipgloss.NewStyle().Margin(1, 0, 2, 4)
-
-	//choiceStyle   = lipgloss.NewStyle().PaddingLeft(1).Foreground(lipgloss.Color("241"))
-	quitViewStyle = lipgloss.NewStyle().Padding(2).Border(lipgloss.RoundedBorder()).BorderForeground(lipgloss.Color("170"))
+	quitViewStyle     = lipgloss.NewStyle().Padding(2).Border(lipgloss.RoundedBorder()).BorderForeground(lipgloss.Color("170"))
 )
 
 type item string
@@ -254,12 +237,6 @@ func (m OpCardsList) View() string {
 	tpl := "Hello! I'm your keeper! You are viewing the credit card.\n\n"
 
 	if m.showCard {
-		/*tpl += "%s\n\n"
-		tpl += dotStyle + subtleStyle.Render(textBlackStyle.Render("ctrl+e: ")+textGreenStyle.Render("edite;"))
-		tpl += "\n"
-		tpl += dotStyle + subtleStyle.Render(textBlackStyle.Render("ctrl+d: ")+textRedStyle.Render("delete;"))
-		tpl += "\n"
-		tpl += dotStyle + subtleStyle.Render(textBlackStyle.Render("ctrl+c, q: ")+"quit")*/
 
 		tpl += "%s\n\n"
 		tpl += "ctrl+e: " + "edite;"

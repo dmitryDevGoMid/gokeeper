@@ -35,9 +35,11 @@ func (m *MockAsimEncrypt) EXPECT() *MockAsimEncryptMockRecorder {
 }
 
 // AllSet mocks base method.
-func (m *MockAsimEncrypt) AllSet() {
+func (m *MockAsimEncrypt) AllSet() error {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "AllSet")
+	ret := m.ctrl.Call(m, "AllSet")
+	ret0, _ := ret[0].(error)
+	return ret0
 }
 
 // AllSet indicates an expected call of AllSet.

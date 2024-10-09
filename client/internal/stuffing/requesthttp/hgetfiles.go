@@ -49,7 +49,6 @@ func (h RequestHTTP) RequestToServer(keyid string, clientid string, selectedFile
 		// Устанавливаем заголовок File-Size для указания размера файла
 		SetHeader("File-Size", fmt.Sprintf("%d", selectedFile.Length)).
 		// Выполняем POST-запрос на указанный URL для загрузки файла
-		//Post("http://localhost:3000/files/download")
 		Post(fmt.Sprintf("%s/files/download", h.data.Config.Server.AddressFileServer))
 
 	if err != nil {

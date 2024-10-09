@@ -25,15 +25,6 @@ type User struct {
 	PublicKey    string             `json:"publickey" bson:"publickey`
 }
 
-//Key      string             `json:"key" bson:"key"`
-//Passwords []Password         `json:"passwords" bson:"passwords"`
-
-/*type Password struct {
-	Description string `json:"description"`
-	Login       string `json:"login"`
-	Password    string `json:"password"`
-}*/
-
 type ResponseSaveData struct {
 	ID   string `json:"id" bson:"id_str,omitempty"`
 	Data string `json:"data" bson:"data"`
@@ -66,11 +57,11 @@ type UserRepository interface {
 }
 
 type userRepository struct {
-	client     db.MongoDBClient
+	client     *db.MongoDBClient
 	collection *mongo.Collection
 }
 
-func NewUserRepository(client db.MongoDBClient) UserRepository {
+func NewUserRepository(client *db.MongoDBClient) UserRepository {
 	collection := client.GetCollection("users")
 	return &userRepository{client: client, collection: collection}
 }

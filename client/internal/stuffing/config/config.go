@@ -30,7 +30,6 @@ func init() {
 	flag.StringVar(&addresServer, "adr", "http://127.0.0.1:8000", "location http server")
 	flag.StringVar(&addresFileServer, "adrfs", "http://127.0.0.1:3000", "location http server")
 	flag.StringVar(&databaseURL, "dbm", "mongodb://admin:admin@localhost:27017", "database url for conection mongo")
-	//flag.StringVar(&databaseURL, "dbm", "mongodb://admin:admin@my-mongodb.gokeeper.svc.cluster.local:27017", "database url for conection mongo")
 }
 
 // Разбираем конфигурацию по структурам

@@ -14,13 +14,6 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
-/*type model struct {
-	filepicker   filepicker.Model
-	selectedFile string
-	quitting     bool
-	err          error
-}*/
-
 var (
 	textGreenStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("#008000"))
 	textRedStyle   = lipgloss.NewStyle().Foreground(lipgloss.Color("#FF0000"))

@@ -39,16 +39,13 @@ type Handler struct {
 	security    security.ISecurity
 }
 
-func NewIHandler(mongodb db.MongoDBClient, asimencrypt asimencrypt.AsimEncrypt) Handlers {
+func NewIHandler(mongodb *db.MongoDBClient, asimencrypt asimencrypt.AsimEncrypt) Handlers {
 	repoUser := userRepository.NewUserRepository(mongodb)
 	repoFile := filesRepository.NewFilesRepository(mongodb)
 	return &Handler{repoUser: repoUser, repoFile: repoFile, asimencrypt: asimencrypt}
 }
 
 func NewHandler(repoUser userRepository.UserRepository, repoFile filesRepository.FilesRepository, asimencrypt asimencrypt.AsimEncrypt, security security.ISecurity) *Handler {
-	//repoUser := userRepository.NewUserRepository(mongodb)
-	//repoFile := filesRepository.NewFilesRepository(mongodb)
-	//return &Handler{repoUser: repoUser, repoFile: repoFile, asimencrypt: asimencrypt}
 	return &Handler{repoUser: repoUser, repoFile: repoFile, asimencrypt: asimencrypt, security: security}
 }
 

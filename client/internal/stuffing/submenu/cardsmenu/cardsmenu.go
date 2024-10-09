@@ -122,8 +122,6 @@ func (m CardsMenu) View() string {
 	fmt.Fprintf(&b, tpl, choices)
 
 	return style.SetStyleBeforeShowMenu(b.String())
-
-	//return fmt.Sprintf(tpl, choices)
 }
 
 func checkbox(label string, checked bool) string {

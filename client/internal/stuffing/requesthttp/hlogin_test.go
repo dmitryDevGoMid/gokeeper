@@ -21,7 +21,6 @@ import (
 	"github.com/charmbracelet/x/exp/teatest"
 	"github.com/go-playground/assert/v2"
 
-	//"github.com/go-playground/assert/v2"
 	"github.com/go-resty/resty/v2"
 	"github.com/muesli/termenv"
 )
@@ -105,9 +104,9 @@ func TestLogin(t *testing.T) {
 	defer serverLogin.Close()
 
 	// Create a resty client with the test server URL
-	client := resty.New() //.SetBaseURL(server.URL)
+	client := resty.New()
 
-	cfg, err := config.ParseConfig() //config.ParseConfig()
+	cfg, err := config.ParseConfig()
 
 	if err != nil {
 		fmt.Println("Config", err)
@@ -139,7 +138,6 @@ func TestLogin(t *testing.T) {
 		}
 	}
 	mLogin = data.RequestHTTP["login"]
-	//fmt.Println("=>", cardslist.CardsList)
 	modelTea := login.NewLogin(data)
 
 	assert.Equal(t, "1", data.User.ID)
@@ -175,7 +173,6 @@ func TestLogin(t *testing.T) {
 		}
 	}
 
-	//fmt.Println(string(dataCompare))
 	err = writeToFile(pathFile, out)
 	if err != nil {
 		fmt.Println("error write to file: ", err)

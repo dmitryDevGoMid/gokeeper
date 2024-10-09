@@ -27,8 +27,6 @@ func (h *Handler) DeleteFile(c *gin.Context) {
 
 	if fileData.ID_File != "" {
 		if err := h.repoFile.DeleteFilesByID(c, fileData.ID_File); err != nil {
-			//c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-			//return
 			switch err {
 			case files.ErrDataNotFound:
 				c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})

@@ -34,16 +34,11 @@ func main() {
 	encrypt.AllSet()
 
 	// Установка режима релиза
-	//gin.SetMode(gin.ReleaseMode)
 
 	// Создание маршрутизатора Gin без настроек по умолчанию
 	r := gin.Default()
-	//r := gin.New()
-
-	//r.Use(middlewares.DecryptMiddleware(encrypt))
 
 	r.Use(middlewares.DecryptMiddleware(encrypt))
-	//r.Use(middlewares.CheckToken())
 	r.Use(middlewares.ChaeckAndGetUserByToken(encrypt))
 
 	mongodb := db.NewConnectMongoDB(cfg)
@@ -86,83 +81,6 @@ func main() {
 	r.PUT("api/user/:username/password", userHandler.UpdatePassword)
 	r.DELETE("api/user/:username", userHandler.DeleteByUsername)
 
-	//go HttpServer(mongodb, encrypt)
-
 	r.Run(":8000")
 
-	/*srv := &http.Server{
-		Addr:    ":8000",
-		Handler: r,
-	}
-
-	// Запуск сервера в отдельной горутине
-	go func() {
-		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			log.Fatalf("listen: %s\n", err)
-		}
-	}()
-
-	// Ожидание сигналов для завершения работы
-	quit := make(chan os.Signal, 1)
-	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
-	<-quit
-	log.Println("Shutting down server...")
-
-	// Установка таймаута для завершения работы
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-	if err := srv.Shutdown(ctx); err != nil {
-		log.Fatalf("Server Shutdown Failed:%+v", err)
-	}
-	log.Println("Server exiting")*/
-
 }
-
-/*func HttpServer(mongodb db.MongoDBClient, encrypt asimencrypt.AsimEncrypt) {
-	// Создаем HTTP сервер
-
-
-	userHandler := userHandlers.NewIHandler(mongodb, encrypt)
-
-	r := gin.New()
-	r.GET("/", func(c *gin.Context) {
-		c.String(http.StatusOK, "Hello World")
-	})
-
-	r.POST("/api/user/login/", func(c *gin.Context) {
-		c.String(http.StatusOK, "Hello World")
-	})
-
-	r.POST("/api/user/log/", userHandler.Login)
-
-	server := &http.Server{
-		Addr:    ":9000",
-		Handler: r,
-	}
-
-	// Канал для получения сигналов завершения работы
-	stop := make(chan os.Signal, 1)
-	signal.Notify(stop, os.Interrupt, syscall.SIGTERM)
-
-	// Запускаем сервер в отдельной горутине
-	go func() {
-		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			log.Fatalf("Could not listen on :9000: %v\n", err)
-		}
-	}()
-
-	// Ждем сигнала завершения работы
-	<-stop
-	log.Println("Shutting down server...")
-
-	// Создаем контекст с таймаутом для плавного завершения работы
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	// Завершаем работу сервера
-	if err := server.Shutdown(ctx); err != nil {
-		log.Fatalf("Server Shutdown Failed:%+v", err)
-	}
-
-	log.Println("Server exited properly")
-}*/
