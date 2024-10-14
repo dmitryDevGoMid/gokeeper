@@ -17,33 +17,6 @@ import (
 
 const pathGokeeperKey = "gokeeperspace/gokeeperkey"
 
-/*type AsimEncrypt interface {
-	SetPrivateKey() error
-	SetPublicKey() error
-	GenerateRsaKeyPair() (*rsa.PrivateKey, *rsa.PublicKey, error)
-	Decrypt(ciphertext []byte) (string, error)
-	GenerateKeyLink() (*rsa.PrivateKey, *rsa.PublicKey, error)
-	GenerateKeyFile(prefix string) error
-	ReadPublicKey(filename string) (*rsa.PublicKey, error)
-	ReadPrivateKey(filename string) (*rsa.PrivateKey, error)
-	Encrypt(msg string) ([]byte, error)
-	CheckFile(name string) error
-	ReadPrivateKeyGetByte() error
-	ReadPublicKeyGetByte() error
-	GetBytePrivate() []byte
-	GetBytePublic() []byte
-	AllSet() error
-	ReadServerPublicKey() (*rsa.PublicKey, error)
-	EncryptByServerKey(msg string) ([]byte, error)
-	SetPublicServerKey(key string) error
-	EncryptByServerKeyParts(msg string) ([]byte, error)
-	DecryptOAEP(msg []byte) ([]byte, error)
-	DecryptOAEPServer(msg []byte) ([]byte, error)
-
-	ReadAndGetClientPublicKey(key string) (*rsa.PublicKey, error)
-	EncryptByClientKeyParts(msg string, key string) ([]byte, error)
-}*/
-
 type AsimEncryptStruct struct {
 	PathEncryptKey string
 	PublicKey      *rsa.PublicKey
@@ -106,18 +79,6 @@ func (asme *AsimEncryptStruct) SetPublicServerKey(key string) error {
 	asme.PublicServerKey = []byte(key)
 
 	return nil
-}
-
-// Get path to keys
-func (asme *AsimEncryptStruct) GetPathToKey() string {
-	PathEncryptKey := "/"
-
-	d, err := os.Getwd()
-	if err != nil {
-		fmt.Println(err)
-	}
-	return d + "/" + PathEncryptKey
-
 }
 
 // Get path to keys
@@ -522,7 +483,7 @@ func (asme *AsimEncryptStruct) EncryptByServerKeyParts(msg string) ([]byte, erro
 	// Use an empty label (label) and the SHA-256 hash function
 	pub, err := asme.ReadServerPublicKey()
 	if err != nil {
-		log.Fatal("ReadServerPublicKey:", err)
+		return nil, err
 	}
 
 	label := []byte("")

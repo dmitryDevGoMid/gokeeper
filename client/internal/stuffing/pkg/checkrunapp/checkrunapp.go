@@ -52,14 +52,14 @@ func runWriteChangeFile(ctx context.Context, hiddenFile string, port int) {
 	}()
 }
 
-func getPath() string {
+func getPath() (string, error) {
 	path, _, _, err := checkdir.EnsureDirectoryExists("gokeeperspace/gokeeperconfig", ".hiddenfile.txt")
 	if err != nil {
-		log.Fatalf("error creating config file: %v", err)
+		return "", err
 	}
 	hiddenFile := filepath.Join(path, "/.hiddenfile.txt")
 
-	return hiddenFile
+	return hiddenFile, nil
 }
 
 func checkFileAndCreateFile(hiddenFile string) (bool, error) {
@@ -141,10 +141,13 @@ func checkFileAndReadFile(hiddenFile string) (bool, int, error) {
 func StartCheckRunApp(ctx context.Context) (bool, error) {
 	//Выйти из приложения, по умолчанию нет
 	exitApp := false
-	hiddenFile := getPath()
+	hiddenFile, err := getPath()
+	if err != nil {
+		return exitApp, err
+	}
 	port := -1
 
-	exitApp, err := checkFileAndCreateFile(hiddenFile)
+	exitApp, err = checkFileAndCreateFile(hiddenFile)
 	if err != nil {
 		return exitApp, err
 	}

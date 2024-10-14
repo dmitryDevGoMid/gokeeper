@@ -97,22 +97,6 @@ func (asme *asimEncrypt) SetPublicServerKey(key string) error {
 }
 
 // Get path to keys
-func (asme *asimEncrypt) GetPathToKey() string {
-	pathEncryptKey := "/"
-
-	if pathEncryptKey != "" {
-
-		d, err := os.Getwd()
-		if err != nil {
-			fmt.Println(err)
-		}
-		return d + "/" + pathEncryptKey
-	}
-	return ""
-
-}
-
-// Get path to keys
 func (asme *asimEncrypt) GetPathOnly(name string) string {
 
 	d, err := os.Getwd()
@@ -134,12 +118,12 @@ func (asme *asimEncrypt) CheckFile(name string) error {
 		} else {
 			fmt.Println(err)
 			log.Printf("Произошла ошибка при проверке существования файла: %v", err)
-			return errors.New("An error occurred while checking the existence of a file")
+			return errors.New("an error occurred while checking the existence of a file")
 		}
 	} else {
 		fmt.Println(err)
 		log.Println("Файл существует")
-		return errors.New("The file exists! Overwriting will result in loss of information!")
+		return errors.New("the file exists overwriting will result in loss of information")
 	}
 }
 
@@ -202,7 +186,7 @@ func (asme *asimEncrypt) GenerateKeyFile(prefix string) error {
 	}
 
 	if (!pri && pub) || (pri && !pub) {
-		return errors.New("Oдин из ключей отсутствует!")
+		return errors.New("один из ключей отсутствует")
 	}
 
 	if pri && pub {
