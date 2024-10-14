@@ -32,7 +32,6 @@ func (h RequestHTTP) ExchangeGet() tea.Msg {
 
 	request.Request = string(jsonRequest)
 
-	//encriptSend, err := h.asimencrypt.EncryptByServerKey(string(jsonRequest))
 	encriptSend := jsonRequest
 
 	if err != nil {
@@ -51,9 +50,6 @@ func (h RequestHTTP) ExchangeGet() tea.Msg {
 	}
 
 	err = h.asimencrypt.SetPublicServerKey(h.data.Keys.Key)
-
-	//fmt.Println(h.data.Keys.Key)
-	//time.Sleep(2 * time.Second)
 
 	if err != nil {
 		return errMsg{err}

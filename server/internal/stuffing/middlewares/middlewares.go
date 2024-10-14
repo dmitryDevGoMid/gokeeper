@@ -40,13 +40,7 @@ func DecryptMiddleware(asimencrypt asimencrypt.AsimEncrypt) gin.HandlerFunc {
 
 			body, _ := io.ReadAll(c.Request.Body)
 
-			fmt.Println("ENCRYPTE=====>>>>")
-			fmt.Println("ENCRYPTE=====>>>>", string(body))
-
 			decompressBody, _ := asimencrypt.DecryptOAEP(body)
-
-			fmt.Println("decompressBody=====>>>>")
-			fmt.Println("decompressBody=====>>>>", string(decompressBody))
 
 			c.Request.Body = io.NopCloser(bytes.NewReader([]byte(decompressBody)))
 		}
@@ -77,18 +71,9 @@ func ChaeckAndGetUserByToken(asimencrypt asimencrypt.AsimEncrypt) gin.HandlerFun
 			}
 			user.PublicKey = string(publicKey)
 
-			fmt.Println("user.PublicKey=======>", user.PublicKey)
-
-			fmt.Println("UDERRSRSRSRSRS=>>>>", user)
-
 			requestBody.User = *user
 			body, _ := io.ReadAll(c.Request.Body)
 
-			fmt.Println("ENCRYPTE=====>>>>")
-			fmt.Println("ENCRYPTE=====>>>>", string(body))
-
-			//decompressBody, _ := asimencrypt.DecryptOAEP(body)
-			//requestBody.Body = decompressBody
 			requestBody.Body = body
 
 			changeRequest, err := json.Marshal(requestBody)
@@ -104,31 +89,3 @@ func ChaeckAndGetUserByToken(asimencrypt asimencrypt.AsimEncrypt) gin.HandlerFun
 		c.Next()
 	}
 }
-
-/*func Authenticate(next http.HandlerFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		//Выдергиваем токен из заголовка
-		tokenString, err := security.ExtractToken(r)
-		if err != nil {
-			restutil.WriteError(w, http.StatusUnauthorized, restutil.ErrUnauthorized)
-			return
-		}
-		//Парсим полученный токен
-		token, err := security.ParseToken(tokenString)
-		if err != nil {
-			log.Println("parse error token", err.Error())
-			//Возвращаем собщение со статусом не авторизован
-			restutil.WriteError(w, http.StatusUnauthorized, restutil.ErrUnauthorized)
-			return
-		}
-
-		if !token.Valid {
-			log.Println("invalid token", tokenString)
-			restutil.WriteError(w, http.StatusUnauthorized, restutil.ErrUnauthorized)
-			return
-		}
-
-		next(w, r)
-
-	}
-}*/

@@ -13,18 +13,13 @@ import (
 
 var client *mongo.Client
 
-type MongoDBClient interface {
-	GetCollection(name string) *mongo.Collection
-	GetClient() *mongo.Client
-}
-
-type mongoDBClient struct {
+type MongoDBClient struct {
 	client *mongo.Client
 }
 
-func NewConnectMongoDB(cfg *config.Config) *mongoDBClient {
+func NewConnectMongoDB(cfg *config.Config) *MongoDBClient {
 	initDataBase(cfg)
-	return &mongoDBClient{client: client}
+	return &MongoDBClient{client: client}
 }
 
 func initDataBase(cfg *config.Config) {
@@ -34,10 +29,10 @@ func initDataBase(cfg *config.Config) {
 	client, _ = mongo.Connect(ctx, clientOptions)
 }
 
-func (m mongoDBClient) GetClient() *mongo.Client {
+func (m MongoDBClient) GetClient() *mongo.Client {
 	return client
 }
 
-func (m mongoDBClient) GetCollection(name string) *mongo.Collection {
+func (m MongoDBClient) GetCollection(name string) *mongo.Collection {
 	return m.client.Database("gokeeper").Collection(name)
 }

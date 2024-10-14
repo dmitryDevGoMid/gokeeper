@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -18,8 +17,6 @@ func (h *Handler) ExchangeGet(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-
-	fmt.Println(exchange)
 
 	type ResponseExchange struct {
 		Key  string `json:"key"`

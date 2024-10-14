@@ -38,13 +38,13 @@ type Chanels struct {
 }
 
 type Repmongo struct {
-	MongoDB                dbmongo.MongoDBClient
+	MongoDB                *dbmongo.MongoDBClient
 	ListChanelForWriteFile map[string]*Chanels
 	ChunkSize              int32
 	SyncToDelete           *sync.Mutex
 }
 
-func NewRepMongo(mongodb dbmongo.MongoDBClient) *Repmongo {
+func NewRepMongo(mongodb *dbmongo.MongoDBClient) *Repmongo {
 	//Карта каналов для клиента на запись в базу
 	listChan := make(map[string]*Chanels)
 

@@ -34,19 +34,10 @@ func (m ShowResponse) ResponseLogin() string {
 		tpl += fmt.Sprintf("Код ответа: %d %s", login.Response.StatusCode, http.StatusText(login.Response.StatusCode))
 	}
 
-	/*tpl += "\n\n"
-	tpl += "Тело ответа: %s"
-
-	tpl += "\n\n"
-	tpl += "Token: %s"*/
-
 	tpl += "\n\n"
 	tpl += dotStyle + subtleStyle.Render("ctrl+c, esc: quit")
-
-	//fmt.Println(m.data.User)
 
 	fmt.Fprintf(&b, tpl, registerStatus)
 
 	return style.SetStyleBeforeShowMenu(b.String())
-	//return fmt.Sprintf(tpl, registerStatus, login.Response, m.data.User.Token)
 }

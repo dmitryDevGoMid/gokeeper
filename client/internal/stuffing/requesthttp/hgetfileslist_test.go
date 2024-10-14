@@ -127,7 +127,7 @@ func TestFilesList(t *testing.T) {
 	// Create a resty client with the test server URL
 	client := resty.New()
 
-	cfg, err := config.ParseConfig() //config.ParseConfig()
+	cfg, err := config.ParseConfig()
 
 	if err != nil {
 		fmt.Println("Config", err)
@@ -212,7 +212,6 @@ func TestFilesList(t *testing.T) {
 
 		return len(bts) > 0
 
-		//return bytes.Contains(bts, dataCompare)
 	}, teatest.WithCheckInterval(time.Millisecond*100), teatest.WithDuration(time.Second*3))
 
 	tm.Quit()

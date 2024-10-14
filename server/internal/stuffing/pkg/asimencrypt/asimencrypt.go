@@ -10,7 +10,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	//"github.com/dmitryDevGoMid/go-service-collect-metrics/internal/agent/config"
 )
 
 type AsimEncrypt interface {
@@ -28,7 +27,7 @@ type AsimEncrypt interface {
 	ReadPublicKeyGetByte() error
 	GetBytePrivate() []byte
 	GetBytePublic() []byte
-	AllSet()
+	AllSet() error
 	ReadClientPublicKey() (*rsa.PublicKey, error)
 	EncryptByClientKey(msg string, key string) ([]byte, error)
 	DecryptOAEP(msg []byte) ([]byte, error)
@@ -37,7 +36,6 @@ type AsimEncrypt interface {
 }
 
 type asimEncrypt struct {
-	//cfg            *config.Config
 	pathEncryptKey string
 	publicKey      *rsa.PublicKey
 	privateKey     *rsa.PrivateKey
@@ -50,7 +48,6 @@ type asimEncrypt struct {
 }
 
 func NewAsimEncrypt() *asimEncrypt {
-	//cfg *config.Config) AsimEncrypt {
 	return &asimEncrypt{}
 }
 
@@ -62,11 +59,29 @@ func (asme *asimEncrypt) GetBytePublic() []byte {
 	return asme.publicKeyByte
 }
 
-func (asme *asimEncrypt) AllSet() {
-	asme.SetPrivateKey()
-	asme.SetPublicKey()
-	asme.ReadPrivateKeyGetByte()
-	asme.ReadPublicKeyGetByte()
+func (asme *asimEncrypt) AllSet() error {
+	err := asme.SetPrivateKey()
+	if err != nil {
+		return err
+	}
+
+	err = asme.SetPublicKey()
+	if err != nil {
+		return err
+	}
+
+	err = asme.ReadPrivateKeyGetByte()
+	if err != nil {
+		return err
+	}
+
+	err = asme.ReadPublicKeyGetByte()
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // GenerateRsaKeyPair generates an RSA key pair and returns the private and public keys
@@ -83,7 +98,7 @@ func (asme *asimEncrypt) SetPublicServerKey(key string) error {
 
 // Get path to keys
 func (asme *asimEncrypt) GetPathToKey() string {
-	pathEncryptKey := "/" //asme.cfg.PathEncrypt.PathEncryptKey
+	pathEncryptKey := "/"
 
 	if pathEncryptKey != "" {
 
@@ -140,9 +155,6 @@ func (asme *asimEncrypt) SetPublicKey() error {
 		}
 		asme.publicKey = publicKey
 		asme.pathEncryptKey = pathEncryptKey
-
-		//asme.cfg.PathEncrypt.KeyEncryptEnbled = true
-		//fmt.Println(asme.publicKey)
 	}
 
 	return nil
@@ -160,9 +172,6 @@ func (asme *asimEncrypt) SetPrivateKey() error {
 		}
 		asme.privateKey = privateKey
 		asme.pathEncryptKey = pathEncryptKey
-
-		//asme.cfg.PathEncrypt.KeyEncryptEnbled = true
-		//fmt.Println(asme.privateKey)
 	}
 
 	return nil
@@ -244,16 +253,12 @@ func (asme *asimEncrypt) GenerateKeyFile(prefix string) error {
 		return err
 	}
 
-	//fmt.Println("Private Key : ", priv)
-	//fmt.Println("Public key ", &priv.PublicKey)
-
 	return nil
 }
 
 func (asme *asimEncrypt) ReadPublicKeyGetByte() error {
 	// Read the file
 	file := asme.GetPathOnly("keeper_public.pem")
-	//fmt.Println(file)
 	data, err := os.ReadFile(file) // changed
 	if err != nil {
 		return err
@@ -344,7 +349,6 @@ func (asme *asimEncrypt) ReadPublicKey(filename string) (*rsa.PublicKey, error) 
 func (asme *asimEncrypt) ReadPrivateKeyGetByte() error {
 	// Read the file
 	file := asme.GetPathOnly("keeper_private.pem")
-	//fmt.Println(file)
 	data, err := os.ReadFile(file) // changed
 	if err != nil {
 		return err
@@ -382,8 +386,6 @@ func (asme *asimEncrypt) ReadPrivateKey(filename string) (*rsa.PrivateKey, error
 // func (asme *asimEncrypt) Encrypt(pub *rsa.PublicKey, msg string) ([]byte, error) {
 func (asme *asimEncrypt) EncryptByClientKey(msg string, key string) ([]byte, error) {
 	// Use an empty label (label) and the SHA-256 hash function
-
-	//pub, _ := asme.ReadClientPublicKey()
 	pub, err := asme.ReadAndGetClientPublicKey(key)
 	if err != nil {
 		log.Println("Error reading client public key: ", err)

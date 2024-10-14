@@ -22,14 +22,13 @@ type Metadata struct {
 }
 
 type Files struct {
-	ID        primitive.ObjectID `json:"_id" bson:"_id,omitempty"`
-	ID_File   string             `json:"id_file" bson:"id_file,omitempty"`
-	Filename  string             `json:"filename" bson:"filename"`
-	ChunkSize int64              `json:"chunk_size" bson:"chunkSize"`
-	//Metadata   string             `json:"metadata" bson: "metadata"`
-	Metadata   Metadata  `json:"metadata" bson:"metadata"`
-	UploadDate time.Time `json:"upload_date" bson:"uploadDate"`
-	Length     int64     `json:"length" bson:"length"`
+	ID         primitive.ObjectID `json:"_id" bson:"_id,omitempty"`
+	ID_File    string             `json:"id_file" bson:"id_file,omitempty"`
+	Filename   string             `json:"filename" bson:"filename"`
+	ChunkSize  int64              `json:"chunk_size" bson:"chunkSize"`
+	Metadata   Metadata           `json:"metadata" bson:"metadata"`
+	UploadDate time.Time          `json:"upload_date" bson:"uploadDate"`
+	Length     int64              `json:"length" bson:"length"`
 }
 
 type FilesRepository interface {
@@ -38,9 +37,9 @@ type FilesRepository interface {
 }
 
 type filesRepository struct {
-	client db.MongoDBClient
+	client *db.MongoDBClient
 }
 
-func NewFilesRepository(client db.MongoDBClient) FilesRepository {
+func NewFilesRepository(client *db.MongoDBClient) FilesRepository {
 	return &filesRepository{client: client}
 }

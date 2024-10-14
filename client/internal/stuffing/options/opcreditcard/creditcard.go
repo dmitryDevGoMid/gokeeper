@@ -29,8 +29,7 @@ const (
 )
 
 var (
-	inputStyle    = lipgloss.NewStyle().Foreground(hotPink)
-	continueStyle = lipgloss.NewStyle().Foreground(darkGray)
+	inputStyle = lipgloss.NewStyle().Foreground(hotPink)
 
 	focusedStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("205"))
 	blurredStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("240"))
@@ -38,12 +37,6 @@ var (
 	focusedButton = focusedStyle.Render("[ Submit ]")
 	blurredButton = fmt.Sprintf("[ %s ]", blurredStyle.Render("Submit"))
 )
-
-/*type model struct {
-	inputs  []textinput.Model
-	focused int
-	err     error
-}*/
 
 type CreditCard struct {
 	data    *model.Data

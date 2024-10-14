@@ -40,14 +40,6 @@ func (m mongoDBClient) GetCollection(name string) *mongo.Collection {
 
 func (m mongoDBClient) GetBucket() (*gridfs.Bucket, error) {
 	// Получаем экземпляр GridFS
-	/*db := m.client.Database("files")
-	bucket, err := gridfs.NewBucket(db)
-	if err != nil {
-		return nil, err
-		//log.Fatal(err)
-	}
-
-	return bucket, nil*/
 	db := m.client.Database("files")
 	opts := options.GridFSBucket().SetName("custom name")
 	bucket, err := gridfs.NewBucket(db, opts)

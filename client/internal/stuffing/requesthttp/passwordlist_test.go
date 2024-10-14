@@ -21,7 +21,6 @@ import (
 	"github.com/charmbracelet/x/exp/teatest"
 	"github.com/go-playground/assert/v2"
 
-	//"github.com/go-playground/assert/v2"
 	"github.com/go-resty/resty/v2"
 	"github.com/muesli/termenv"
 )
@@ -126,9 +125,9 @@ func TestPasswordsList(t *testing.T) {
 	defer serverPasswordList.Close()
 
 	// Create a resty client with the test server URL
-	client := resty.New() //.SetBaseURL(server.URL)
+	client := resty.New()
 
-	cfg, err := config.ParseConfig() //config.ParseConfig()
+	cfg, err := config.ParseConfig()
 
 	if err != nil {
 		fmt.Println("Config", err)
@@ -160,7 +159,6 @@ func TestPasswordsList(t *testing.T) {
 		}
 	}
 	passwordslist = data.RequestHTTP["passwordslist"]
-	//fmt.Println("=>", cardslist.CardsList)
 	modelTea := oppaswordslist.NewOpPasswordsList(data)
 
 	tm := teatest.NewTestModel(t, modelTea, teatest.WithInitialTermSize(300, 100))
@@ -189,7 +187,6 @@ func TestPasswordsList(t *testing.T) {
 		}
 	}
 
-	//fmt.Println(string(dataCompare))
 	err = writeToFile(pathFile, out)
 	if err != nil {
 		fmt.Println("error write to file: ", err)

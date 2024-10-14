@@ -5,9 +5,7 @@ import (
 	"encoding/base64"
 	"fmt"
 	"io"
-	"os"
 	"strings"
-	"time"
 
 	"github.com/dmitryDevGoMid/gokeeper/client/internal/stuffing/model"
 	"github.com/dmitryDevGoMid/gokeeper/client/internal/stuffing/pkg/asimencrypt"
@@ -17,8 +15,7 @@ import (
 )
 
 type CleintInterface interface {
-	DecryptResponse(asimencrypt asimencrypt.AsimEncrypt)
-	SetTokenToRequest(data *model.Data, asimencrypt asimencrypt.AsimEncrypt)
+	SetTokenToRequest(data *model.Data, asimencrypt *asimencrypt.AsimEncryptStruct)
 	CheckStatusCode401(data *model.Data)
 }
 
@@ -67,7 +64,6 @@ func (cl *Client) CheckStatusCode401(data *model.Data) {
 					cl.data.Log.WithFields(keeperlog.ToMap(cl.logField)).Error("Error refreshing token: " + err.Error())
 					return err
 				}
-				//c.SetRetryWaitTime(1 * time.Microsecond)
 				c.SetRetryCount(1)
 				cl.data.Log.WithFields(keeperlog.ToMap(cl.logField)).Info("Refreshing toke successfully")
 
@@ -104,83 +100,8 @@ func (cl *Client) RefreshToken(tokenRefresh string) error {
 	return nil
 }
 
-func (cl *Client) DecryptResponse(asimencrypt asimencrypt.AsimEncrypt) {
-	// Registering Response Middleware
-	cl.client.OnAfterResponse(func(c *resty.Client, resp *resty.Response) error {
-		splitUrl := strings.Split(resp.Request.URL, "/api/user/")
-		url := splitUrl[1]
-		fmt.Println("DecryptResponse URL_SEND_ADRESS:", splitUrl[1])
-		//time.Sleep(3 * time.Second)
-		if url != "login" && url != "exchange/set" && url != "exchange/get" {
-			//fmt.Println("Middleware DecryptResponse:")
-			//fmt.Println(string(resp.Body()))
-			//time.Sleep(3 * time.Second,
-			body, err := io.ReadAll(resp.RawBody())
-			if err != nil {
-				fmt.Println("error io.ReadAll middlewwre", err)
-			}
-
-			fmt.Println("ОН САМЫЙ БОДИ:", string(body))
-
-			os.Exit(1)
-
-			fmt.Println("BODY Response:")
-			fmt.Println("BODY Response:")
-			fmt.Println("BODY Response:")
-			fmt.Println("BODY Response:")
-			fmt.Println("BODY Response:")
-			fmt.Println("BODY Response:")
-			fmt.Println("BODY Response:", string(resp.Body()))
-			fmt.Println("BODY Response:")
-			fmt.Println("BODY Response:")
-			fmt.Println("BODY Response:")
-			fmt.Println("BODY Response:")
-			fmt.Println("BODY Response:")
-			time.Sleep(3 * time.Second)
-			base64Body, err := base64.StdEncoding.DecodeString(string(resp.Body()))
-			if err != nil {
-				fmt.Println("Error decoding base64:", err)
-			}
-			decodeData, err := asimencrypt.DecryptOAEP(base64Body)
-			if err != nil {
-				fmt.Println("error decode middlewwre", err)
-			}
-			//fmt.Println(" DecryptResponse RESULT:", string(decodeData))
-			//time.Sleep(3 * time.Second)
-			resp.SetBody(decodeData)
-		}
-		//body, _ := io.ReadAll(c.Request.Body)
-		/*body, err := io.ReadAll(resp.RawResponse.Body)
-		if err != nil {
-			fmt.Println("error io.ReadAll middlewwre", err)
-		}
-
-		decodeData, err := asimencrypt.DecryptOAEP(body)
-		if err != nil {
-			fmt.Println("error decode middlewwre", err)
-		}
-
-		fmt.Println("ENCRYPTE=====>>>>")
-		fmt.Println("ENCRYPTE=====>>>>", string(decodeData))
-
-		//decompressBody, _ := asimencrypt.DecryptOAEP(body)
-
-		fmt.Println("decompressBody=====>>>>")
-		fmt.Println("decompressBody=====>>>>", string(decodeData))
-
-		//c.Request.Body = io.NopCloser(bytes.NewReader(decodeData))
-		resp. = io.NopCloser(bytes.NewReader(decodeData))*/
-		// Now you have access to Client and current Response object
-		// manipulate it as per your need
-		//fmt.Println("RESPONSE:", resp.Header().Get("Content-Type"))
-		//fmt.Println(string(resp.Body()))
-
-		return nil // if its success otherwise return error
-	})
-}
-
 // Set Token to request
-func (cl *Client) SetTokenToRequest(data *model.Data, asimencrypt asimencrypt.AsimEncrypt) {
+func (cl *Client) SetTokenToRequest(data *model.Data, asimencrypt *asimencrypt.AsimEncryptStruct) {
 	cl.client.OnBeforeRequest(func(c *resty.Client, req *resty.Request) error {
 		cl.logField.Method = "SetTokenToRequest - OnBeforeRequest - Public-Key"
 		var url string

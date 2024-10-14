@@ -21,15 +21,11 @@ var (
 	ticksStyle     = lipgloss.NewStyle().Foreground(lipgloss.Color("79"))
 	textGreenStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("#008000"))
 	textRedStyle   = lipgloss.NewStyle().Foreground(lipgloss.Color("#FF0000"))
-	//progressEmpty = subtleStyle.Render(progressEmptyChar)
-	dotStyle  = lipgloss.NewStyle().Foreground(lipgloss.Color("236")).Render(dotChar)
-	mainStyle = lipgloss.NewStyle().MarginLeft(2)
+	dotStyle       = lipgloss.NewStyle().Foreground(lipgloss.Color("236")).Render(dotChar)
+	mainStyle      = lipgloss.NewStyle().MarginLeft(2)
 
 	quitViewStyle = lipgloss.NewStyle().Padding(1).Border(lipgloss.RoundedBorder()).BorderForeground(lipgloss.Color("170"))
 	choiceStyle   = lipgloss.NewStyle().PaddingLeft(1).Foreground(lipgloss.Color("241"))
-
-	// Gradient colors we'll use for the progress bar
-	//ramp = makeRampStyles("#B14FFF", "#00FFA3", progressBarWidth)
 )
 
 type Page interface {
@@ -64,23 +60,12 @@ func (m ShowErrors) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m ShowErrors) SetNextStepByNameExit() {
-	//Временно скрыли отпраку ключа клиента, отправляем ключ в момент регистрации
-
-	/*if m.data.NextStep.RequestByName == "exchangeget" {
-		m.data.NextStep.NextStepByName = "requesthttp"
-		m.data.NextStep.RequestByName = "exchangeset"
-		return
-	}*/
-	//fmt.Println("Select NextStepByName")
-	//time.Sleep(2 * time.Second)
 
 	if m.data.User.Auth {
 		m.data.NextStep.NextStepByName = "submenu"
 	} else {
 		m.data.NextStep.NextStepByName = "topmenu"
 	}
-	//fmt.Println("m.data.NextStep.NextStepByName:", m.data.NextStep.NextStepByName)
-	//time.Sleep(2 * time.Second)
 }
 
 // The first view, where you're choosing a task

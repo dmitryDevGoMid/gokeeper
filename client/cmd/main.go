@@ -37,7 +37,7 @@ import (
 
 var data *model.Data
 var client *resty.Client
-var encrypt asimencrypt.AsimEncrypt
+var encrypt *asimencrypt.AsimEncryptStruct
 
 func StartStep() {
 	data.NextStep.NextStepByName = "requesthttp"
@@ -91,7 +91,10 @@ func main() {
 		os.Exit(1)
 	}
 
-	encrypt.AllSet()
+	err = encrypt.AllSet()
+	if err != nil {
+		log.Fatalf("Failed to initialize asimencrypt: %v", err)
+	}
 
 	client = resty.New()
 

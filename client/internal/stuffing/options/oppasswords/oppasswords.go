@@ -16,33 +16,20 @@ import (
 	"github.com/muesli/termenv"
 )
 
-/*const (
-	dotChar = " • "
-)*/
-
 var (
 	focusedStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("205"))
 	blurredStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("240"))
 	cursorStyle  = focusedStyle
 	noStyle      = lipgloss.NewStyle()
-	//helpStyle           = blurredStyle
-	//cursorModeHelpStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("244"))
 
 	focusedButton = focusedStyle.Render("[ Submit ]")
 	blurredButton = fmt.Sprintf("[ %s ]", blurredStyle.Render("Submit"))
-
-	//subtleStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("241"))
-	//ticksStyle    = lipgloss.NewStyle().Foreground(lipgloss.Color("79"))
-	//checkboxStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("212"))
-	//progressEmpty = subtleStyle.Render(progressEmptyChar)
-	//dotStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("236")).Render(dotChar)
 )
 
 type LoginAndPassword struct {
 	data       *model.Data
 	focusIndex int
 	inputs     []textinput.Model
-	//cursorMode cursor.Mode
 }
 
 type Page interface {

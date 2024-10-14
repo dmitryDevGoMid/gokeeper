@@ -46,21 +46,5 @@ func (h *Handler) PasswordList(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	/*if err != nil {
-		fmt.Println("json.Unmarshal(listPasswordsJson, &ResponseLists{}) =>", err)
-	} else {
-		fmt.Println("respList=====>>>>>>>>", respList)
-	}*/
-
-	//fmt.Println("List Passwords =>", list)
-	//fmt.Println("List Passwords JSON =>", string(listPasswordsJson))
-
-	/*data, err := h.asimencrypt.EncryptByClientKeyParts(string(listPasswordsJson), request.User.PublicKey)
-	if err != nil {
-		log.Println("asimencrypt failed to encrypt", err)
-	}
-	fmt.Println("LIST PASSWORDS:", base64.StdEncoding.EncodeToString(data))*/
-
-	//c.JSON(http.StatusOK, base64.StdEncoding.EncodeToString(data))
 	c.JSON(http.StatusOK, *respList)
 }

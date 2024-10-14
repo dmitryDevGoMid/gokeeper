@@ -49,7 +49,6 @@ func setFolder(name string) string {
 
 var StreamMap map[string]pb.DataStreamer_SendFilesClient
 
-// func SendFiles(c *gin.Context, client pb.DataStreamerClient, filePath string, clientid string) error {
 func SendFiles(c *gin.Context, client pb.DataStreamerClient) error {
 
 	fmt.Println("SIZE MAP:", len(StreamMap))
@@ -147,7 +146,6 @@ func SendAbotr(stream pb.DataStreamer_SendFilesClient, uidfile string) error {
 }
 
 func StreamClose(stream pb.DataStreamer_SendFilesClient, uidfile string) error {
-	//err := status.Error(500, "StreamClose")
 	fmt.Println("Закрываем этот поток!")
 	err := stream.CloseSend()
 	if err != nil {

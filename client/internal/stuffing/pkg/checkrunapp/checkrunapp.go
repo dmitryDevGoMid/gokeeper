@@ -29,7 +29,7 @@ func findFreePort(startPort int) (int, error) {
 // Мьютекс для синхронизации доступа к файлу
 var mu sync.Mutex
 
-func RunWriteChangeFile(ctx context.Context, hiddenFile string, port int) {
+func runWriteChangeFile(ctx context.Context, hiddenFile string, port int) {
 	// Горутина для перезаписи файла каждые 30 секунд
 	go func() {
 
@@ -52,7 +52,7 @@ func RunWriteChangeFile(ctx context.Context, hiddenFile string, port int) {
 	}()
 }
 
-func GetPath() string {
+func getPath() string {
 	path, _, _, err := checkdir.EnsureDirectoryExists("gokeeperspace/gokeeperconfig", ".hiddenfile.txt")
 	if err != nil {
 		log.Fatalf("error creating config file: %v", err)
@@ -62,7 +62,7 @@ func GetPath() string {
 	return hiddenFile
 }
 
-func CheckFileAndCreateFile(hiddenFile string) (bool, error) {
+func checkFileAndCreateFile(hiddenFile string) (bool, error) {
 	exitApp := false
 	if _, err := os.Stat(hiddenFile); os.IsNotExist(err) {
 		startPort := 8000 // Начальный порт для перебора
@@ -87,7 +87,7 @@ func CheckFileAndCreateFile(hiddenFile string) (bool, error) {
 	return exitApp, nil
 }
 
-func CheckFileAndReadFile(hiddenFile string) (bool, int, error) {
+func checkFileAndReadFile(hiddenFile string) (bool, int, error) {
 	exitApp := false
 	usePort := 0
 	startPort := 8000 // Начальный порт для перебора
@@ -102,9 +102,6 @@ func CheckFileAndReadFile(hiddenFile string) (bool, int, error) {
 		log.Fatal("Не удалось прочитать скрытый файл:", err)
 		return true, usePort, err
 	}
-
-	//fmt.Println("file port:", port)
-	//fmt.Println("freee port:", freePort)
 
 	lastTime, err := parseTimeFromContent(hiddenFile)
 	if err != nil {
@@ -137,7 +134,6 @@ func CheckFileAndReadFile(hiddenFile string) (bool, int, error) {
 	} else {
 		exitApp = true
 	}
-	//fmt.Printf("Порт %d занят. Прошло %f секунд с момента последней записи.\n", port, elapsedTime)
 
 	return exitApp, usePort, nil
 }
@@ -145,23 +141,23 @@ func CheckFileAndReadFile(hiddenFile string) (bool, int, error) {
 func StartCheckRunApp(ctx context.Context) (bool, error) {
 	//Выйти из приложения, по умолчанию нет
 	exitApp := false
-	hiddenFile := GetPath()
+	hiddenFile := getPath()
 	port := -1
 
-	exitApp, err := CheckFileAndCreateFile(hiddenFile)
+	exitApp, err := checkFileAndCreateFile(hiddenFile)
 	if err != nil {
 		return exitApp, err
 	}
 
 	if !exitApp {
-		exitApp, port, err = CheckFileAndReadFile(hiddenFile)
+		exitApp, port, err = checkFileAndReadFile(hiddenFile)
 		if err != nil {
 			return exitApp, err
 		}
 	}
 
 	if !exitApp && port > 0 {
-		RunWriteChangeFile(ctx, hiddenFile, port)
+		runWriteChangeFile(ctx, hiddenFile, port)
 	}
 
 	return exitApp, nil
@@ -178,8 +174,6 @@ func createHiddenFile(filePath string, port int) error {
 	}
 
 	return nil
-
-	//fmt.Printf("Скрытый файл создан: %s\n", filePath)
 }
 
 func readHiddenFileTime(filePath string) (string, error) {

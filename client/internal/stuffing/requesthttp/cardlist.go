@@ -82,7 +82,7 @@ func (h RequestHTTP) parseResponseCardsList(resp *resty.Response) {
 				fmt.Println("Error decoding body of response", err)
 			}
 			decryptBody, err := h.asimencrypt.DecryptOAEP(baseDecode)
-			//fmt.Println(string(decryptBody))
+
 			if err != nil {
 				cardslist.Response.Error = fmt.Sprintf("Error decoding %s", err.Error())
 			} else {

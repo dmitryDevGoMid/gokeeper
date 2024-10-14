@@ -80,7 +80,6 @@ func (h RequestHTTP) parseResponseFilesList(resp *resty.Response) {
 			}
 
 			decryptBody, err := h.asimencrypt.DecryptOAEP(baseDecode)
-			//fmt.Println(string(decryptBody))
 			if err != nil {
 				fileslist.Response.Error = fmt.Sprintf("Error decoding %s", err.Error())
 			} else {
@@ -106,7 +105,5 @@ func (h RequestHTTP) parseResponseFilesList(resp *resty.Response) {
 	fileslist.Response.StatusCode = resp.StatusCode()
 
 	h.data.RequestHTTP["fileslist"] = fileslist
-
-	//time.Sleep(10 * time.Second)
 
 }

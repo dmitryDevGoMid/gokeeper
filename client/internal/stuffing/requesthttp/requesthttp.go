@@ -16,7 +16,7 @@ import (
 
 type RequestHTTP struct {
 	data        *model.Data
-	asimencrypt asimencrypt.AsimEncrypt
+	asimencrypt *asimencrypt.AsimEncryptStruct
 	client      *resty.Client
 	status      int
 	err         error
@@ -44,7 +44,7 @@ type errMsg struct{ error }
 
 func (e errMsg) Error() string { return e.error.Error() }
 
-func NewRequestHTTP(client *resty.Client, model *model.Data, asimencrypt asimencrypt.AsimEncrypt) *RequestHTTP {
+func NewRequestHTTP(client *resty.Client, model *model.Data, asimencrypt *asimencrypt.AsimEncryptStruct) *RequestHTTP {
 	request := &RequestHTTP{data: model, client: client, asimencrypt: asimencrypt}
 	request.data = model
 
@@ -59,145 +59,140 @@ func NewRequestHTTP(client *resty.Client, model *model.Data, asimencrypt asimenc
 	return request
 }
 
-func (m RequestHTTP) NextStepToSendAuthDataToServer() {
-	m.logField.Method = "NextStepToSendAuthDataToServer"
-	m.data.Log.WithFields(keeperlog.ToMap(m.logField)).Info("Set to Next Step - topmenu")
+func (h RequestHTTP) NextStepToSendAuthDataToServer() {
+	h.logField.Method = "NextStepToSendAuthDataToServer"
+	h.data.Log.WithFields(keeperlog.ToMap(h.logField)).Info("Set to Next Step - topmenu")
 
-	m.data.NextStep.NextStepByName = "topmenu"
+	h.data.NextStep.NextStepByName = "topmenu"
 }
 
-func (m RequestHTTP) NextStepToShowShowDialog() {
-	m.logField.Method = "NextStepToShowShowDialog"
-	m.data.Log.WithFields(keeperlog.ToMap(m.logField)).Info("Set to Next Step - showresponse")
+func (h RequestHTTP) NextStepToShowShowDialog() {
+	h.logField.Method = "NextStepToShowShowDialog"
+	h.data.Log.WithFields(keeperlog.ToMap(h.logField)).Info("Set to Next Step - showresponse")
 
-	m.data.NextStep.NextStepByName = "showresponse"
+	h.data.NextStep.NextStepByName = "showresponse"
 
 }
 
-func (m RequestHTTP) NextStepToShowShowREsponse() {
+func (h RequestHTTP) NextStepToShowShowREsponse() {
 
-	switch m.data.NextStep.RequestByName {
+	switch h.data.NextStep.RequestByName {
 	case "getfiles":
-		m.data.NextStep.NextStepByName = "files"
+		h.data.NextStep.NextStepByName = "files"
 	case "getfileslist":
-		m.data.NextStep.NextStepByName = "showfileslist"
+		h.data.NextStep.NextStepByName = "showfileslist"
 	case "sendfiles":
-		m.data.NextStep.NextStepByName = "files"
+		h.data.NextStep.NextStepByName = "files"
 	case "passwordslist":
-		m.data.NextStep.NextStepByName = "showpasswordslist"
+		h.data.NextStep.NextStepByName = "showpasswordslist"
 	case "cardslist":
-		m.data.NextStep.NextStepByName = "showcardslist"
+		h.data.NextStep.NextStepByName = "showcardslist"
 	default:
-		m.data.NextStep.NextStepByName = "showresponse"
+		h.data.NextStep.NextStepByName = "showresponse"
 	}
 }
 
-func (m RequestHTTP) Init() tea.Cmd {
+func (h RequestHTTP) Init() tea.Cmd {
 	// Создание канала для отмены операции
-	m.data.Cancel = make(chan struct{})
+	h.data.Cancel = make(chan struct{})
 
-	m.logField.Method = "init"
+	h.logField.Method = "init"
 	// Логирование информации о запросе
-	m.data.Log.WithFields(keeperlog.ToMap(m.logField)).Info("Init request")
+	h.data.Log.WithFields(keeperlog.ToMap(h.logField)).Info("Init request")
 
 	// Обработка различных запросов
-	switch m.data.NextStep.RequestByName {
+	switch h.data.NextStep.RequestByName {
 	case "register":
-		return m.Register
+		return h.Register
 	case "login":
-		return m.Login
+		return h.Login
 	case "exchangeget":
-		return m.ExchangeGet
+		return h.ExchangeGet
 	case "exchangeset":
-		return m.ExchangeSet
+		return h.ExchangeSet
 	case "newpassword":
-		return m.PasswordNew
+		return h.PasswordNew
 	case "passwordslist":
-		return m.PasswordsList
+		return h.PasswordsList
 	case "sendfiles":
-		return m.RunSendFiles
+		return h.RunSendFiles
 	case "getfiles":
-		return m.RunGetFiles
+		return h.RunGetFiles
 	case "getfileslist":
-		return m.FilesList
+		return h.FilesList
 	case "deletefile":
-		return m.DeleteFile
+		return h.DeleteFile
 	case "newcreditcard":
-		return m.Card
+		return h.Card
 	case "cardslist":
-		return m.CardsList
+		return h.CardsList
 	case "deletecard":
-		return m.CardDelete
+		return h.CardDelete
 	case "deletepassword":
-		return m.PasswordDelete
+		return h.PasswordDelete
 
 	}
 	return nil
 }
 
-func (m RequestHTTP) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	m.logField.Method = "update"
+func (h RequestHTTP) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	h.logField.Method = "update"
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
-		m.data.Log.WithFields(keeperlog.ToMap(m.logField)).Info("Key pressed")
+		h.data.Log.WithFields(keeperlog.ToMap(h.logField)).Info("Key pressed")
 
 		switch msg.String() {
-		case "q":
-			m.NextStepToSendAuthDataToServer()
-			return m, tea.Quit
-		case "ctrl+c":
-			m.data.Cancel <- struct{}{}
-			m.NextStepToShowShowREsponse()
-			return m, tea.Quit
+		case "q", "ctrl+c":
+			h.data.Cancel <- struct{}{}
+			h.NextStepToSendAuthDataToServer()
+			return h, tea.Quit
 		default:
-			return m, nil
+			return h, nil
 		}
 
 	case statusMsg:
-		m.data.Log.WithFields(keeperlog.ToMap(m.logField)).Info(fmt.Sprintf("statusMsg - %d", int(msg)))
+		h.data.Log.WithFields(keeperlog.ToMap(h.logField)).Info(fmt.Sprintf("statusMsg - %d", int(msg)))
 
-		m.status = int(msg)
-		m.NextStepToShowShowREsponse()
-		return m, tea.Quit
+		h.status = int(msg)
+		h.NextStepToShowShowREsponse()
+		return h, tea.Quit
 
 	case errMsg:
-		m.data.Log.WithFields(keeperlog.ToMap(m.logField)).Error(fmt.Sprintf("statusMsg - %s", msg.Error()))
+		h.data.Log.WithFields(keeperlog.ToMap(h.logField)).Error(fmt.Sprintf("statusMsg - %s", msg.Error()))
 
-		m.err = msg
+		h.err = msg
 		if msg.Error() == "ExistFile" {
 			// Обработка ошибки ExistFile
 		} else {
-			m.NextStepToShowShowREsponse()
+			h.NextStepToShowShowREsponse()
 		}
-		return m, tea.Quit
+		return h, tea.Quit
 
 	default:
-		//logField := keeperlog.LogField{Action: "Update", RequestByName: "default"}
-		m.data.Log.WithFields(keeperlog.ToMap(m.logField)).Info("Default")
-		return m, nil
+		h.data.Log.WithFields(keeperlog.ToMap(h.logField)).Info("Default")
+		return h, nil
 	}
 }
 
-func (m RequestHTTP) View() string {
-	s := "Выполняем запрос, пожалуйста, ожидайте ..." + m.data.NextStep.RequestByName
-	if m.err != nil {
-		s += fmt.Sprintf("something went wrong: %s", m.err)
-	} else if m.status != 0 {
-		s += fmt.Sprintf("%d %s", m.status, http.StatusText(m.status))
+func (h RequestHTTP) View() string {
+	s := "Выполняем запрос, пожалуйста, ожидайте ..." + h.data.NextStep.RequestByName
+	if h.err != nil {
+		s += fmt.Sprintf("something went wrong: %s", h.err)
+	} else if h.status != 0 {
+		s += fmt.Sprintf("%d %s", h.status, http.StatusText(h.status))
 	}
 	return s + "\n"
 }
 
 // Обновляем токен прозрачно для клиента
-func (m RequestHTTP) RefreshToken() error {
-	m.logField.Method = "RefreshToken"
+func (h RequestHTTP) RefreshToken() error {
+	h.logField.Method = "RefreshToken"
 	//Получаем токен для обновления основного токена
-	tokenRefresh := m.data.User.TokenRefresh
+	tokenRefresh := h.data.User.TokenRefresh
 	// Send a request to refresh the token
-	resp, err := m.client.R().
-		//SetQueryParam("refresh_token", "your_refresh_token").
+	resp, err := h.client.R().
 		SetHeader("Token-Refresh", tokenRefresh).
-		Post("http://localhost:8000/api/user/refresh/token")
+		Post(fmt.Sprintf("%s/files/download", h.data.Config.Server.AddressFileServer))
 
 	if err != nil {
 		return err
@@ -208,11 +203,11 @@ func (m RequestHTTP) RefreshToken() error {
 	}
 
 	//Устанавливаем токены в модель
-	m.data.User.Auth = true
-	m.data.User.Token = resp.Header().Get("Token")
-	m.data.User.TokenRefresh = resp.Header().Get("Token-Refresh")
+	h.data.User.Auth = true
+	h.data.User.Token = resp.Header().Get("Token")
+	h.data.User.TokenRefresh = resp.Header().Get("Token-Refresh")
 
-	m.data.Log.WithFields(keeperlog.ToMap(m.logField)).Info("Successfully RefreshToken()")
+	h.data.Log.WithFields(keeperlog.ToMap(h.logField)).Info("Successfully RefreshToken()")
 
 	return nil
 }
